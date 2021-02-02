@@ -1,43 +1,19 @@
-version: "3"
+version: '2'
 services:
-  python-fe:
-    # replace username/repo:tag with your name and image details
-    image: kammana/python-app:0.0.2
-    deploy:
-      replicas: 5
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: 50M
+  python:
+    image: kammana/python-redis:1
+    container_name: python
+    environment:
+      - "redis_host=redis"
     ports:
-      - "80:5000"
+     - "8080:5000"
     networks:
-      - javahome
-  redis-be:
-    # replace username/repo:tag with your name and image details
-    image: redis
-    deploy:
-      replicas: 1
-      restart_policy:
-        condition: on-failure
-      resources:
-        limits:
-          cpus: "0.1"
-          memory: 50M
+      - javahome-app
+  redis:
+    container_name: redis
+    image: "redis"
     networks:
-      - javahome
-  visualizer:
-    image: dockersamples/visualizer:stable
-    ports:
-      - "8080:8080"
-    volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-    deploy:
-      placement:
-        constraints: [node.role == manager]
-    networks:
-      - javahome
+      - javahome-app
 networks:
-  javahome:
+  javahome-app:
+    driver: bridge
